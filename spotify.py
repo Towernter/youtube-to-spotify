@@ -45,20 +45,28 @@ class SpotifyAPI:
 
     def get_playlist_tracks(self, playlist_id):
         fields = 'items(track(id,uri,name,artists(name),album(release_date),popularity),added_at)'
-        endpoint = f'playlists/{playlist_id}/tracks?fields={fields}'
-        data = self.fetch_web_api(endpoint)
-        return [
-            {
-                'id': item['track']['id'],
-                'uri': item['track']['uri'],
-                'song_name': item['track']['name'],
-                'artists': ', '.join(artist['name'] for artist in item['track']['artists']),
-                'date_added': item['added_at'],
-                'release_date': item['track']['album']['release_date'],
-                'popularity': item['track']['popularity']
-            }
-            for item in data.get('items', [])
-        ]
+        tracks = []
+        offset = 0
+        while True:
+            endpoint = f'playlists/{playlist_id}/tracks?fields={fields}&limit=100&offset={offset}'
+            data = self.fetch_web_api(endpoint)
+            items = data.get('items', [])
+            tracks += [
+                {
+                    'id': item['track']['id'],
+                    'uri': item['track']['uri'],
+                    'song_name': item['track']['name'],
+                    'artists': ', '.join(artist['name'] for artist in item['track']['artists']),
+                    'date_added': item['added_at'],
+                    'release_date': item['track']['album']['release_date'],
+                    'popularity': item['track']['popularity']
+                }
+                for item in items if item.get('track')
+            ]
+            if len(items) < 100:
+                break
+            offset += 100
+        return tracks
 
     def _make_track_result(self, track):
         return {
@@ -158,17 +166,18 @@ class SpotifyAPI:
         current_tracks = self.get_playlist_tracks(playlist_id)
         current_uris = [t['uri'] for t in current_tracks]
 
-        uri_to_index = {uri: idx for idx, uri in enumerate(current_uris)}
-        final_order = [uri for uri in track_uris if uri in uri_to_index]
+        uri_set = set(current_uris)
+        final_order = [uri for uri in track_uris if uri in uri_set]
+        current_order = list(current_uris)
 
         for i, uri in enumerate(final_order):
-            current_index = uri_to_index[uri]
-            if current_index != i:
-                body = {'range_start': current_index, 'insert_before': i}
-                self.fetch_web_api(f'playlists/{playlist_id}/tracks', method='PUT', body=body)
-                moved_uri = final_order[current_index]
-                uri_to_index[moved_uri] = i
-                for u in final_order[i:current_index]:
-                    uri_to_index[u] += 1
+            current_pos = current_order.index(uri)
+            if current_pos != i:
+                self.fetch_web_api(
+                    f'playlists/{playlist_id}/tracks',
+                    method='PUT',
+                    body={'range_start': current_pos, 'insert_before': i}
+                )
+                current_order.insert(i, current_order.pop(current_pos))
 
         print(f"Finished reordering {len(final_order)} tracks.")
