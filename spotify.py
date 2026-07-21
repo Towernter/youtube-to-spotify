@@ -21,7 +21,10 @@ class SpotifyAPI:
             'refresh_token': self.refresh_token
         }
         response = requests.post(token_url, headers=headers, data=data)
-        response.raise_for_status()
+        if not response.ok:
+            raise RuntimeError(
+                f'Spotify token refresh failed ({response.status_code}): {response.text}'
+            )
         return response.json()['access_token']
 
     def fetch_web_api(self, endpoint, method='GET', body=None):
