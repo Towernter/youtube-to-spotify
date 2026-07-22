@@ -23,7 +23,7 @@ This repo is the companion code for a six-chapter series published on DEV. Each 
 |---|---------|----------------|
 | 1 | [Understanding the Plan & Setting Up Accounts](https://dev.to/towernter/automate-spotify-and-youtube-playlists-chapter-1-understanding-the-plan-setting-up-accounts-p6e) | What we're building, how APIs work, and the four accounts you need |
 | 2 | [Setting Up Spotify](https://dev.to/towernter/automate-spotify-and-youtube-playlists-chapter-2-setting-up-spotify-3jpj) | Creating a Spotify developer app and getting your CLIENT_ID, CLIENT_SECRET, and REFRESH_TOKEN |
-| 3 | [Setting Up YouTube](https://dev.to/towernter/automate-spotify-and-youtube-playlists-chapter-3-setting-up-youtube-4nk1) | Enabling the YouTube Data API on Google Cloud and finding your playlist ID |
+| 3 | [Setting Up YouTube](https://dev.to/towernter/automate-spotify-and-youtube-playlists-chapter-3-setting-up-youtube-1mfb) | Enabling the YouTube Data API on Google Cloud and finding your playlist ID |
 | 4 | [Writing the Code](https://dev.to/towernter/automate-spotify-and-youtube-playlists-chapter-4-writing-the-code-4b5a) | A plain-English walkthrough of all three Python files and how the sync logic works |
 | 5 | [Running It Locally](https://dev.to/towernter/automate-spotify-and-youtube-playlists-chapter-5-running-it-locally-g0f) | Installing Python, setting up a virtual environment, and running the script for the first time |
 | 6 | [Deployment](https://dev.to/towernter/automate-spotify-and-youtube-playlists-chapter-6-deployment-4lmh) | Pushing to GitHub and setting up a GitHub Actions workflow that runs daily at midnight UTC |
